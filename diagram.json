@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "author": "Mayra",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "board-esp32-s3-devkitc-1",
+      "id": "esp",
+      "top": 0,
+      "left": 0,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht1",
+      "top": -80,
+      "left": 240,
+      "attrs": {
+        "temperature": "25",
+        "humidity": "60"
+      }
+    }
+  ],
+  "connections": [
+    ["esp:3V3", "dht1:VCC", "red", ["h0"]],
+    ["esp:GND.1", "dht1:GND", "black", ["h0"]],
+    ["esp:4", "dht1:SDA", "green", ["h0"]],
+    ["esp:17", "$serialMonitor:RX", "blue", ["h0"]],
+    ["esp:18", "$serialMonitor:TX", "gray", ["h0"]]
+  ],
+  "dependencies": {},
+  "serialMonitor": {
+    "display": "terminal",
+    "convertEol": true,
+    "newline": "lf"
+  }
+}
