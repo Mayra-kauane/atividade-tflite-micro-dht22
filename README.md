@@ -72,13 +72,6 @@ Se o `Wokwi Terminal` ficar vazio, pare a simulacao, confirme que `wokwi.toml` u
 - Link do repositorio Git com este codigo
 - Screenshot da simulacao e do monitor serial
 
-## Prints recomendados
-
-- VS Code com ESP-IDF configurado e projeto aberto
-- Wokwi Simulator mostrando ESP32-S3 conectado ao DHT22
-- Terminal do build mostrando `Project build complete`
-- Wokwi Terminal mostrando as leituras de temperatura e umidade
-
 ## Evidencias
 
 ### Circuito no Wokwi
