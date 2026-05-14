@@ -1,87 +1,130 @@
-# Leitura de sensor DHT22 com ESP32-S3
+# Atividade Prática 4/6 - TensorFlow Lite Micro no ESP32-S3
 
-Projeto em C com ESP-IDF para ler temperatura e umidade de um sensor DHT22 simulado no Wokwi e imprimir os valores no monitor serial.
+Projeto desenvolvido para reproduzir o **Hello World do TensorFlow Lite Micro** no ESP32-S3 e implementar uma aplicação extra com sensor e dataset.
 
-## Hardware simulado
+O repositório indicado pelo professor foi usado apenas como referência de organização. A implementação deste projeto foi feita na base local já existente com ESP32-S3, Wokwi e DHT22.
 
-- Placa: ESP32-S3 DevKitC-1
-- Sensor: DHT22
-- Alimentacao: 3V3 e GND
-- Dados: GPIO4
-- Monitor serial Wokwi: UART1 em GPIO17/TX e GPIO18/RX
+## Checklist da entrega
 
-O circuito esta definido em `diagram.json`:
+| Item solicitado | Status | Evidência |
+| --- | --- | --- |
+| Reproduzir os passos do Hello World | Atendido | Firmware executa inferência TFLite Micro para estimar `sin(x)`. |
+| Print do Wokwi rodando Hello World | Atendido | Imagem em `img/esp32s3-tflite-micro-ashrae.png`. |
+| Análise do código e documentação | Atendido | Relatório em `docs/relatorio.md`. |
+| Extra com sensor e dataset | Atendido | DHT22 + dataset `data/dht_comfort_dataset.csv` + modelo gerado em `models/comfort_model.json`. |
 
-- `esp:3V3` -> `dht1:VCC`
-- `esp:GND.1` -> `dht1:GND`
-- `esp:4` -> `dht1:SDA`
-- `esp:17` -> `$serialMonitor:RX`
-- `esp:18` -> `$serialMonitor:TX`
+## Print da simulação
+
+![Wokwi rodando Hello World e extra com DHT22](img/esp32s3-tflite-micro-ashrae.png)
+
+## O que o firmware faz
+
+1. Inicializa o TensorFlow Lite Micro no ESP32-S3.
+2. Carrega o modelo Hello World embarcado em `main/model.cc`.
+3. Executa inferências para prever `sin(x)`.
+4. Lê temperatura e umidade do DHT22 no Wokwi.
+5. Usa um modelo leve de conforto térmico gerado a partir do dataset local.
+6. Mostra no terminal serial tanto o resultado do Hello World quanto o extra.
+
+Exemplo de saída:
+
+```text
+I (...) atividade_4: Hello World | x=3.456 | predicted_sin=-0.322 | expected_sin=-0.309
+I (...) atividade_4: Extra DHT22 | temp=25.0 C | umidade=60.0 % | conforto=agradavel
+```
 
 ## Arquivos principais
 
-- `main/dht_sensor_main.c`: codigo da aplicacao em C
-- `main/CMakeLists.txt`: dependencias do componente principal
-- `diagram.json`: circuito usado pela simulacao do Wokwi
-- `wokwi.toml`: aponta para `build/flasher_args.json`, que carrega bootloader, tabela de particoes e aplicacao no Wokwi
+- `main/atividade_main.cc`: aplicação principal em C++.
+- `main/model.cc`: modelo Hello World convertido para array C/C++.
+- `main/model.h`: declaração do modelo TFLite embarcado.
+- `main/generated/comfort_model.h`: modelo leve do extra gerado a partir do CSV.
+- `data/dht_comfort_dataset.csv`: dataset do extra.
+- `scripts/train_models.py`: lê o dataset, treina o modelo leve do extra e gera métricas.
+- `scripts/calcular_centroides_dataset.py`: atalho para o mesmo fluxo de geração.
+- `models/comfort_model.json`: descrição do modelo gerado para o extra.
+- `models/metrics.json`: métricas do modelo do extra.
+- `diagram.json`: circuito do Wokwi.
+- `wokwi.toml`: configuração do Wokwi.
+- `docs/relatorio.md`: análise e observações da atividade.
+
+## Passos reproduzidos do Hello World
+
+O notebook da aula descreve o fluxo:
+
+1. Gerar amostras `x` no intervalo `[0, 2*pi]`.
+2. Calcular `y = sin(x)`.
+3. Treinar uma rede neural pequena.
+4. Converter o modelo para TensorFlow Lite.
+5. Quantizar o modelo para `int8`.
+6. Converter o `.tflite` para array C/C++.
+7. Executar a inferência no microcontrolador com TensorFlow Lite Micro.
+
+No firmware, a entrada `x` é quantizada com `scale` e `zero_point`, enviada ao modelo, e a saída é dequantizada para `float`.
+
+## Extra
+
+A aplicação extra usa:
+
+- **Sensor**: DHT22 no Wokwi.
+- **Entrada**: temperatura e umidade.
+- **Dataset**: `data/dht_comfort_dataset.csv`.
+- **Saída**: classe de conforto térmico: `frio`, `agradavel` ou `quente`.
+
+O script abaixo calcula os centroides do dataset e atualiza o arquivo usado pelo firmware:
+
+```powershell
+python scripts\train_models.py
+```
+
+Esse script gera:
+
+```text
+models/comfort_model.json
+models/metrics.json
+main/generated/comfort_model.h
+```
+
+Métrica atual do modelo do extra:
+
+```text
+Acurácia no dataset: 100% (22/22 amostras)
+Classes: frio, agradavel, quente
+```
+
+Esse extra não é outro exemplo pronto do `esp-tflite-micro`. Ele modifica o projeto para usar um sensor físico/simulado, um dataset próprio e um artefato de modelo gerado a partir desse dataset.
 
 ## Como compilar
 
-No terminal do ESP-IDF:
+No terminal ESP-IDF:
 
 ```powershell
 idf.py set-target esp32s3
 idf.py build
 ```
 
-O build deve gerar:
-
-- `build/sensor_dht22.bin`
-- `build/sensor_dht22.elf`
-- `build/flasher_args.json`
-
-Depois de alterar o codigo, sempre rode `idf.py build` antes de iniciar a simulacao no Wokwi.
-
-## Como simular no VS Code
-
-1. Abra esta pasta no VS Code.
-2. Confirme que a extensao ESP-IDF esta configurada.
-3. Confirme que a extensao Wokwi esta conectada a sua conta.
-4. Compile com `idf.py build`.
-5. Pare a simulacao, se ela ja estiver aberta.
-6. Inicie novamente a simulacao pela extensao Wokwi.
-7. Abra o painel `Wokwi Terminal` e tire o screenshot com leituras parecidas com:
+Arquivos esperados:
 
 ```text
-Leitura de sensor DHT22 no ESP32-S3
-Pino de dados: GPIO4
-Monitor serial: UART1 TX=GPIO17 RX=GPIO18 @ 115200 baud
-
-Temperatura: 25.0 C | Umidade: 60.0 %
-Temperatura: 25.0 C | Umidade: 60.0 %
+build/atividade_tflite_dht22.bin
+build/atividade_tflite_dht22.elf
+build/flasher_args.json
 ```
 
-Se o `Wokwi Terminal` ficar vazio, pare a simulacao, confirme que `wokwi.toml` usa `firmware = "build/flasher_args.json"`, rode `idf.py build`, feche a aba Wokwi Simulator e inicie a simulacao de novo.
+## Como simular no Wokwi
 
-## Checklist da entrega
+1. Compile o projeto com `idf.py build`.
+2. Abra `diagram.json`.
+3. Inicie a simulação pelo Wokwi.
+4. Confira o terminal com as linhas `Hello World` e `Extra DHT22`.
+5. Tire o print da tela com circuito e terminal serial.
 
-- Configuracao do ESP-IDF e conta Wokwi
-- Circuito no Wokwi com ESP32-S3 + DHT22
-- Codigo compilando sem erros
-- Monitor serial mostrando temperatura e umidade
-- Link do repositorio Git com este codigo
-- Screenshot da simulacao e do monitor serial
+## Observação sobre o desenho do circuito
 
-## Evidencias
+O DHT22 usa três conexões:
 
-### Circuito no Wokwi
+- `3V3` para `VCC`, fio vermelho.
+- `GND` para `GND`, fio preto.
+- `GPIO4` para `SDA`, fio verde.
 
-![Circuito no Wokwi](img/simulacao-circuito.png)
-
-### Monitor serial com leituras
-
-![Monitor serial com leituras](img/simulacao-monitor-serial.png)
-
-### Codigo compilando sem erros
-
-![Build completo no ESP-IDF](img/build-completo.png)
+O terminal serial é conectado pelos pinos padrão `TX` e `RX` da placa no Wokwi.

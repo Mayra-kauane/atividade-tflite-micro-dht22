@@ -1,0 +1,29 @@
+{
+  "type": "nearest_centroid",
+  "inputs": [
+    "temperature_c",
+    "humidity_percent"
+  ],
+  "output": "comfort",
+  "distance": "squared_euclidean_with_humidity_scaled_by_5",
+  "centroids": [
+    {
+      "label": "agradavel",
+      "temperature_c": 24.0,
+      "humidity_percent": 54.57142857142857,
+      "samples": 7
+    },
+    {
+      "label": "frio",
+      "temperature_c": 17.0,
+      "humidity_percent": 55.714285714285715,
+      "samples": 7
+    },
+    {
+      "label": "quente",
+      "temperature_c": 31.5,
+      "humidity_percent": 72.875,
+      "samples": 8
+    }
+  ]
+}

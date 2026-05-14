@@ -1,0 +1,31 @@
+{
+  "hello_world": {
+    "model": "int8 TensorFlow Lite Micro sine regression model embedded in main/model.cc",
+    "runtime": "esp-tflite-micro"
+  },
+  "dht_comfort": {
+    "dataset": "data\\dht_comfort_dataset.csv",
+    "generated_header": "main\\generated\\comfort_model.h",
+    "model_file": "models\\comfort_model.json",
+    "accuracy": 1.0,
+    "correct": 22,
+    "total": 22,
+    "confusion_matrix": {
+      "agradavel": {
+        "agradavel": 7,
+        "frio": 0,
+        "quente": 0
+      },
+      "frio": {
+        "agradavel": 0,
+        "frio": 7,
+        "quente": 0
+      },
+      "quente": {
+        "agradavel": 0,
+        "frio": 0,
+        "quente": 8
+      }
+    }
+  }
+}
