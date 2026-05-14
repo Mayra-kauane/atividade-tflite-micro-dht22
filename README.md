@@ -4,15 +4,6 @@ Projeto desenvolvido para reproduzir o **Hello World do TensorFlow Lite Micro** 
 
 O repositório indicado pelo professor foi usado apenas como referência de organização. A implementação deste projeto foi feita na base local já existente com ESP32-S3, Wokwi e DHT22.
 
-## Checklist da entrega
-
-| Item solicitado | Status | Evidência |
-| --- | --- | --- |
-| Reproduzir os passos do Hello World | Atendido | Firmware executa inferência TFLite Micro para estimar `sin(x)`. |
-| Print do Wokwi rodando Hello World | Atendido | Imagem em `img/esp32s3-tflite-micro-ashrae.png`. |
-| Análise do código e documentação | Atendido | Relatório em `docs/relatorio.md`. |
-| Extra com sensor e dataset | Atendido | DHT22 + dataset `data/dht_comfort_dataset.csv` + modelo gerado em `models/comfort_model.json`. |
-
 ## Print da simulação
 
 ![Wokwi rodando Hello World e extra com DHT22](img/esp32s3-tflite-micro-ashrae.png)
