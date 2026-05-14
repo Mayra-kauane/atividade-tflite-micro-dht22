@@ -1,8 +1,7 @@
 # Atividade Prática 4/6 - TensorFlow Lite Micro no ESP32-S3
 
 Projeto desenvolvido para reproduzir o **Hello World do TensorFlow Lite Micro** no ESP32-S3 e implementar uma aplicação extra com sensor e dataset.
-
-O repositório indicado pelo professor foi usado apenas como referência de organização. A implementação deste projeto foi feita na base local já existente com ESP32-S3, Wokwi e DHT22.
+A implementação deste projeto foi feita na base local já existente com ESP32-S3, Wokwi e DHT22.
 
 ## Print da simulação
 
